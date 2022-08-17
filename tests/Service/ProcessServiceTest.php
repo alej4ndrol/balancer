@@ -10,10 +10,10 @@ use App\Model\ProcessListResponse;
 use App\Repository\ProcessRepository;
 use App\Repository\WorkMachineRepository;
 use App\Service\ProcessService;
+use App\Tests\AbstractTestCase;
 use Doctrine\Common\Collections\Criteria;
-use PHPUnit\Framework\TestCase;
 
-class ProcessServiceTest extends TestCase
+class ProcessServiceTest extends AbstractTestCase
 {
     public function testGetProcessesByWorkMachineNotFound(): void
     {
@@ -31,6 +31,8 @@ class ProcessServiceTest extends TestCase
 
     public function testGetProcessesByWorkMachine(): void
     {
+        $workMachine = new WorkMachine();
+        $this->setEntityId($workMachine, 130);
         $processRepository = $this->createMock(ProcessRepository::class);
         $processRepository->expects($this->once())
             ->method('findProcessByWorkMachineId')
@@ -41,7 +43,7 @@ class ProcessServiceTest extends TestCase
         $workMachineRepository->expects($this->once())
             ->method('find')
             ->with(130)
-            ->willReturn(new WorkMachine());
+            ->willReturn($workMachine);
 
         $service = new ProcessService($processRepository, $workMachineRepository);
         $expected = new ProcessListResponse([$this->createProcessItemModel()]);
@@ -61,7 +63,7 @@ class ProcessServiceTest extends TestCase
 //        $repository->expects($this->once())
 //            ->method('findBy')
 //            ->with([], ['workMachine' => Criteria::ASC])
-//            ->willReturn([(new Process())->setId(7)->setName('test')->setRam(7)->setProcessor(7)->setWorkMachine($workMachine)]);
+//            ->willReturn([(new Process())->setName('test')->setRam(7)->setProcessor(7)->setWorkMachine($workMachine)]);
 //
 //        $service = new ProcessService($repository);
 //        $expected = new ProcessListResponse([new ProcessListItem(7, 'test', 7, 7, 7)]);
@@ -69,12 +71,17 @@ class ProcessServiceTest extends TestCase
 //    }
     private function createProcessEntity(): Process
     {
-        return (new Process())
-            ->setId(123)
+        $workMachine = new WorkMachine();
+        $this->setEntityId($workMachine, 130);
+        $process = (new Process())
             ->setName('Test process')
             ->setProcessor(123)
             ->setRam(123123)
-            ->setWorkMachine((new WorkMachine())->setId(130));
+            ->setWorkMachine($workMachine);
+
+        $this->setEntityId($process, 123);
+
+        return $process;
     }
 
     private function createProcessItemModel(): ProcessListItem

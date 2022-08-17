@@ -1,7 +1,16 @@
 version: '3.9'
 
 services:
-###> doctrine/doctrine-bundle ###
+  database-test:
+    container_name: balancer-test
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"
+
   database:
     container_name: balancer
     image: postgres:14-alpine
@@ -11,4 +20,3 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
-

@@ -17,7 +17,7 @@ class WorkMachineService
 
     public function getWorkMachines(): WorkMachineListResponse
     {
-        $workMachines = $this->workMachineRepository->findBy([], ['name' => Criteria::ASC]);
+        $workMachines = $this->workMachineRepository->findAllSortedByName();
         $items = array_map(
             fn (WorkMachine $workMachine) => new WorkMachineListItem(
                 $workMachine->getId(), $workMachine->getName(), $workMachine->getProcessor(), $workMachine->getRam()
@@ -28,8 +28,8 @@ class WorkMachineService
         return new WorkMachineListResponse($items);
     }
 
-    public function getWorkMachineByName(string $name): WorkMachine
-    {
-        return $this->workMachineRepository->findOneBy(['name' => $name]);
-    }
+//    public function getWorkMachineByName(string $name): WorkMachine
+//    {
+//        return $this->workMachineRepository->findOneBy(['name' => $name]);
+//    }
 }

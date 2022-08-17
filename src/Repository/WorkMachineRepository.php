@@ -2,9 +2,9 @@
 
 namespace App\Repository;
 
-use _PHPStan_9a6ded56a\Composer\XdebugHandler\Process;
 use App\Entity\WorkMachine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,6 +20,14 @@ class WorkMachineRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, WorkMachine::class);
+    }
+
+    /**
+     * @return WorkMachine[]
+     */
+    public function findAllSortedByName(): array
+    {
+        return $this->findBy([], ['name' => Criteria::ASC]);
     }
 
     public function add(WorkMachine $entity, bool $flush = false): void
