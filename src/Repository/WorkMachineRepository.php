@@ -6,6 +6,7 @@ use App\Entity\WorkMachine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\This;
 
 /**
  * @extends ServiceEntityRepository<WorkMachine>
@@ -46,5 +47,10 @@ class WorkMachineRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function existsById(int $id): bool
+    {
+        return null !== $this->find($id);
     }
 }

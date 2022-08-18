@@ -18,9 +18,7 @@ class ProcessService
 
     public function getProcessesByWorkMachine(int $workMachineId): ProcessListResponse
     {
-        $workMachine = $this->workMachineRepository->find($workMachineId);
-
-        if (null === $workMachine) {
+        if (!$this->workMachineRepository->existsById($workMachineId)) {
             throw new WorkMachineNotFoundException();
         }
 

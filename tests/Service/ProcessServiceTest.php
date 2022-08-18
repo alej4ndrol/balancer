@@ -20,9 +20,9 @@ class ProcessServiceTest extends AbstractTestCase
         $processRepository = $this->createMock(ProcessRepository::class);
         $workMachineRepository = $this->createMock(WorkMachineRepository::class);
         $workMachineRepository->expects($this->once())
-            ->method('find')
+            ->method('existsById')
             ->with(130)
-            ->willReturn(null);
+            ->willReturn(false);
 
         $this->expectException(WorkMachineNotFoundException::class);
 
@@ -41,9 +41,9 @@ class ProcessServiceTest extends AbstractTestCase
 
         $workMachineRepository = $this->createMock(WorkMachineRepository::class);
         $workMachineRepository->expects($this->once())
-            ->method('find')
+            ->method('existsById')
             ->with(130)
-            ->willReturn($workMachine);
+            ->willReturn(true);
 
         $service = new ProcessService($processRepository, $workMachineRepository);
         $expected = new ProcessListResponse([$this->createProcessItemModel()]);
