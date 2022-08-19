@@ -16,13 +16,13 @@ class WorkMachine
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column]
-    private ?int $processor = null;
+    private int $processor;
 
     #[ORM\Column]
-    private ?int $ram = null;
+    private int $ram;
 
     #[ORM\OneToMany(mappedBy: 'workMachine', targetEntity: Process::class)]
     private Collection $process;

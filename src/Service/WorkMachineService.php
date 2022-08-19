@@ -5,9 +5,7 @@ namespace App\Service;
 use App\Entity\WorkMachine;
 use App\Model\WorkMachineListItem;
 use App\Model\WorkMachineListResponse;
-use App\Repository\ProcessRepository;
 use App\Repository\WorkMachineRepository;
-use Doctrine\Common\Collections\Criteria;
 
 class WorkMachineService
 {
@@ -28,8 +26,4 @@ class WorkMachineService
         return new WorkMachineListResponse($items);
     }
 
-//    public function getWorkMachineByName(string $name): WorkMachine
-//    {
-//        return $this->workMachineRepository->findOneBy(['name' => $name]);
-//    }
 }

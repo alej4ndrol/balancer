@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Process;
+use App\Exception\ProcessNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,7 +23,6 @@ class ProcessRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $id
      * @return Process[]
      */
     public function findProcessByWorkMachineId(int $id): array
@@ -33,21 +33,18 @@ class ProcessRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function add(Process $entity, bool $flush = false): void
+    public function getByName(string $name): Process
     {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
+        $process = $this->findOneBy(['name' => $name]);
+        if (null === $process) {
+            throw new ProcessNotFoundException();
         }
+
+        return $process;
     }
 
-    public function remove(Process $entity, bool $flush = false): void
+    public function existsByName(string $name): bool
     {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return null !== $this->findOneBy(['name' => $name]);
     }
 }

@@ -31,17 +31,11 @@ class ProcessService
     public function getProcesses(): ProcessListResponse
     {
         $processes = $this->processRepository->findBy([], ['workMachine' => Criteria::ASC]);
-        $items = array_map(
-            fn (Process $process) => (new ProcessListItem())
-                ->setId($process->getId())
-                ->setName($process->getName())
-                ->setRam($process->getRam())
-                ->setProcessor($process->getProcessor())
-                ->setWorkMachine($process->getWorkMachine()->getId()),
-            $processes
-        );
 
-        return new ProcessListResponse($items);
+        return new ProcessListResponse(array_map(
+            [$this, 'map'],
+            $processes
+        ));
     }
 
     public function map(Process $process): ProcessListItem
@@ -54,4 +48,6 @@ class ProcessService
             ->setWorkMachine($process->getWorkMachine()->getId())
         ;
     }
+
+
 }
