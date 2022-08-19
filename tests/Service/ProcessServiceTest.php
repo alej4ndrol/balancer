@@ -12,6 +12,7 @@ use App\Repository\WorkMachineRepository;
 use App\Service\ProcessService;
 use App\Tests\AbstractTestCase;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ProcessServiceTest extends AbstractTestCase
 {
@@ -51,24 +52,36 @@ class ProcessServiceTest extends AbstractTestCase
         $this->assertEquals($expected, $service->getProcessesByWorkMachine(130));
     }
 
-//    public function testGetProcesses()
-//    {
-    // //        $workMachine = $this->createMock(WorkMachine::class);
-    // //        $workMachine->setName('server test')->setProcessor(77)->setRam(77)->setId(7);
-//
-//        $workMachine = new WorkMachine();
-//        $workMachine->setName('server test')->setProcessor(77)->setRam(77)->setId(7);
-//
-//        $repository = $this->createMock(ProcessRepository::class);
-//        $repository->expects($this->once())
-//            ->method('findBy')
-//            ->with([], ['workMachine' => Criteria::ASC])
-//            ->willReturn([(new Process())->setName('test')->setRam(7)->setProcessor(7)->setWorkMachine($workMachine)]);
-//
-//        $service = new ProcessService($repository);
-//        $expected = new ProcessListResponse([new ProcessListItem(7, 'test', 7, 7, 7)]);
-//        $this->assertEquals($expected, $service->getProcesses());
-//    }
+    public function testGetProcesses()
+    {
+        //         $workMachine = $this->createMock(WorkMachine::class);
+        //         $workMachine->setName('server test')->setProcessor(77)->setRam(77)->setId(7);
+
+        $workMachine = (new WorkMachine())->setName('server test')->setProcessor(77)->setRam(77);
+        $this->setEntityId($workMachine, 7);
+
+        $process = (new Process())->setName('test')->setRam(7)->setProcessor(7)->setWorkMachine($workMachine);
+        $this->setEntityId($process, 7);
+
+        $repository = $this->createMock(ProcessRepository::class);
+        $repository->expects($this->once())
+            ->method('findBy')
+            ->with([], ['workMachine' => Criteria::ASC])
+            ->willReturn([$process]);
+
+        $mockRepository = $this->createMock(WorkMachineRepository::class);
+
+        $service = new ProcessService($repository, $mockRepository);
+        $expected = new ProcessListResponse([(new ProcessListItem())
+            ->setId(7)
+            ->setName('test')
+            ->setRam(7)
+            ->setProcessor(7)
+            ->setWorkMachine(7),
+            ]);
+        $this->assertEquals($expected, $service->getProcesses());
+    }
+
     private function createProcessEntity(): Process
     {
         $workMachine = new WorkMachine();

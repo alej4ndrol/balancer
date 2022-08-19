@@ -3,10 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\WorkMachine;
+use App\Exception\WorkMachineNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
-use phpDocumentor\Reflection\Types\This;
 
 /**
  * @extends ServiceEntityRepository<WorkMachine>
@@ -31,22 +31,39 @@ class WorkMachineRepository extends ServiceEntityRepository
         return $this->findBy([], ['name' => Criteria::ASC]);
     }
 
-    public function add(WorkMachine $entity, bool $flush = false): void
+    /**
+     * @return WorkMachine[]
+     */
+    public function findWorkMachineWithEnoughResources(int $processor, int $ram): array
     {
-        $this->getEntityManager()->persist($entity);
+        $query = $this->_em->createQuery('SELECT b FROM App\Entity\WorkMachine as b WHERE b.id IN (
+    SELECT
+        IDENTITY(a.workMachine)
+    FROM
+        App\Entity\Process a
+    GROUP BY
+        a.workMachine
+    HAVING
+        SUM(a.processor) + (:processor) <= b.processor AND SUM(a.ram) + (:ram) <= b.ram)
+        ');
+        $query->setParameter('processor', $processor);
+        $query->setParameter('ram', $ram);
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $query->getResult();
     }
 
-    public function remove(WorkMachine $entity, bool $flush = false): void
+    public function getByName(string $name): WorkMachine
     {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
+        $workMachine = $this->findOneBy(['name' => $name]);
+        if (null === $workMachine) {
+            throw new WorkMachineNotFoundException();
         }
+        return $workMachine;
+    }
+
+    public function existsByName(string $name): bool
+    {
+        return null !== $this->findOneBy(['name' => $name]);
     }
 
     public function existsById(int $id): bool
