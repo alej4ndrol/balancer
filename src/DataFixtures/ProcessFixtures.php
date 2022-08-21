@@ -21,7 +21,6 @@ class ProcessFixtures extends Fixture implements DependentFixtureInterface
             ->setProcessor(1001)
             ->setRam(101)
             ->setWorkMachine($server_1)
-            // ->setWorkMachine($this->workMachineService->getWorkMachineByName('server 1'))
         );
         $manager->persist((new Process())
             ->setName('secProc')

@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use App\Attribute\RequestBody;
+use App\Model\CreateWorkMachineRequest;
+use App\Model\ErrorResponse;
+use App\Model\IdResponse;
 use App\Model\WorkMachineListResponse;
 use App\Service\BalancingService;
 use App\Service\WorkMachineService;
@@ -11,13 +14,10 @@ use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Model\IdResponse;
-use App\Model\ErrorResponse;
-use App\Model\CreateWorkMachineRequest;
 
 class WorkMachineController extends AbstractController
 {
-    public function __construct(private WorkMachineService $workMachineService,  private BalancingService $balancingService)
+    public function __construct(private WorkMachineService $workMachineService, private BalancingService $balancingService)
     {
     }
 
@@ -79,5 +79,18 @@ class WorkMachineController extends AbstractController
         $this->balancingService->deleteWorkMachine($name);
 
         return $this->json(null);
+    }
+
+    /**
+     * @OA\Tag(name="Work machine")
+     * @OA\Response(
+     *     response = 200,
+     *     description = "Return work-machines load",
+     * )
+     */
+    #[Route(path: '/api/v1/workmachine/load/get', methods: ['GET'])]
+    public function getWorkMachinesLoad(): Response
+    {
+        return $this->json($this->balancingService->getAllWorkMachineLoad());
     }
 }

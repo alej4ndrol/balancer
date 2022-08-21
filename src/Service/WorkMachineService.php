@@ -18,7 +18,10 @@ class WorkMachineService
         $workMachines = $this->workMachineRepository->findAllSortedByName();
         $items = array_map(
             fn (WorkMachine $workMachine) => new WorkMachineListItem(
-                $workMachine->getId(), $workMachine->getName(), $workMachine->getProcessor(), $workMachine->getRam()
+                $workMachine->getId(),
+                $workMachine->getName(),
+                $workMachine->getProcessor(),
+                $workMachine->getRam(),
             ),
             $workMachines
         );

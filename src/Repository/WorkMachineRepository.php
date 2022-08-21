@@ -36,7 +36,7 @@ class WorkMachineRepository extends ServiceEntityRepository
      */
     public function findWorkMachineWithEnoughResources(int $processor, int $ram): array
     {
-        $query = $this->_em->createQuery('SELECT b FROM App\Entity\WorkMachine as b WHERE b.id IN (
+        $query = $this->_em->createQuery('SELECT b FROM App\Entity\WorkMachine as b WHERE b.id NOT IN (
     SELECT
         IDENTITY(a.workMachine)
     FROM
@@ -44,11 +44,12 @@ class WorkMachineRepository extends ServiceEntityRepository
     GROUP BY
         a.workMachine
     HAVING
-        SUM(a.processor) + (:processor) <= b.processor AND SUM(a.ram) + (:ram) <= b.ram)
+        SUM(a.processor) + (:processor) > b.processor AND SUM(a.ram) + (:ram) > b.ram)
         ');
         $query->setParameter('processor', $processor);
         $query->setParameter('ram', $ram);
 
+        var_dump($query->getResult());
         return $query->getResult();
     }
 

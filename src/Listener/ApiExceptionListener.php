@@ -17,8 +17,10 @@ class ApiExceptionListener
     public function __construct(
         private ExceptionMappingResolver $resolver,
         private LoggerInterface $logger,
-        private SerializerInterface $serializer)
-    {
+        private SerializerInterface $serializer,
+//        private bool $isDebug
+    //#todo exception listener tests
+    ) {
     }
 
     public function __invoke(ExceptionEvent $event): void

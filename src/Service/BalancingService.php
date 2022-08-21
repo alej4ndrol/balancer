@@ -44,7 +44,6 @@ class BalancingService
     {
         $process = $this->processRepository->getByName($name);
 
-
         $this->em->remove($process);
         $this->em->flush();
     }
@@ -56,23 +55,15 @@ class BalancingService
 
         $workMachines = $this->workMachineRepository->findWorkMachineWithEnoughResources($processor, $ram);
 
+//        var_dump($workMachines);
         foreach ($workMachines as $workMachine) {
-            $processes = $this->processRepository->findProcessByWorkMachineId($workMachine->getId());
-
-            $processProcessor = 0;
-            $processRam = 0;
-            foreach ($processes as $process) {
-                $processProcessor += $process->getProcessor();
-                $processRam += $process->getRam();
-            }
-
-            $data = ($processProcessor / $workMachine->getProcessor() + $processRam / $workMachine->getRam()) / 2;
-            // #todo add getLoad
+            $data = $this->getWorkMachineLoad($workMachine);
             // #todo add tests
             if ($data < $minLoadFact) {
                 $minLoadFact = $data;
                 $result = $workMachine;
             }
+//            var_dump([$data, $workMachine->getName()]);
         }
 
         if (null === $result) {
@@ -80,6 +71,31 @@ class BalancingService
         }
 
         return $result;
+    }
+
+    public function getWorkMachineLoad(WorkMachine $workMachine): float
+    {
+        $processes = $this->processRepository->findProcessByWorkMachineId($workMachine->getId());
+
+        $processProcessor = 0;
+        $processRam = 0;
+        foreach ($processes as $process) {
+            $processProcessor += $process->getProcessor();
+            $processRam += $process->getRam();
+        }
+
+        return ($processProcessor / $workMachine->getProcessor() + $processRam / $workMachine->getRam()) / 2;
+    }
+
+    public function getAllWorkMachineLoad(): array
+    {
+        $workMachineLoad = [];
+        $workMachines = $this->workMachineRepository->findAll();
+        foreach ($workMachines as $workMachine) {
+            $workMachineLoad[$workMachine->getName()] = $this->getWorkMachineLoad($workMachine);
+        }
+
+        return $workMachineLoad;
     }
 
     public function createWorkMachine(CreateWorkMachineRequest $request): IdResponse
