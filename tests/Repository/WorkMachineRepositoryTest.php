@@ -51,6 +51,7 @@ class WorkMachineRepositoryTest extends AbstractRepositoryTest
         $testProcess6 = (new Process())->setName('Proc6')->setRam(5)->setProcessor(5)->setWorkMachine($testWorkMachine3);
         $testProcess7 = (new Process())->setName('Proc7')->setRam(7)->setProcessor(7)->setWorkMachine($testWorkMachine2);
 
+
         foreach ([$testWorkMachine2, $testWorkMachine3, $testWorkMachine1] as $workMachine) {
             $this->em->persist($workMachine);
         }
@@ -65,7 +66,7 @@ class WorkMachineRepositoryTest extends AbstractRepositoryTest
             $this->workMachineRepository->findWorkMachineWithEnoughResources(5, 5)
         );
 
-        $this->assertEquals(['Test3', 'Test1'], $titles);
+        $this->assertEquals(['Test2', 'Test3', 'Test1'], $titles);
 
     }
 }

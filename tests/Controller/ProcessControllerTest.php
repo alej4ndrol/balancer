@@ -10,8 +10,8 @@ class ProcessControllerTest extends AbstractControllerTest
 {
     public function testProcessByWorkMachine()
     {
-        $workMahchineId = $this->createWorkMachine();
-        $this->client->request('GET', '/api/v1/workmachine/'.$workMahchineId.'/processes');
+        $workMachineId = $this->createWorkMachine();
+        $this->client->request('GET', '/api/v1/workmachine/'.$workMachineId.'/processes');
         $responseContent = json_decode($this->client->getResponse()->getContent());
 
         $this->assertResponseIsSuccessful();
@@ -53,13 +53,32 @@ class ProcessControllerTest extends AbstractControllerTest
         return $workMachine->getId();
     }
 
-//    public function testGetProcesses()
-//    {
-//        $this->em->persist((new Process())->setName('Test')->s);
-//
-//        $this->client->request('GET', '/api/v1/process/get');
-//        $responseContent = $this->client->getResponse()->getContent();
-//
-//        $this->assertResponseIsSuccessful();
-//    }
+    public function testGetProcesses()
+    {
+        $workMachineId = $this->createWorkMachine();
+        $this->client->request('GET', '/api/v1/process/get');
+        $responseContent = json_decode($this->client->getResponse()->getContent());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonDocumentMatchesSchema($responseContent, [
+            'type' => 'object',
+            'required' => ['items'],
+            'properties' => [
+                'items' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'required' => ['id', 'name', 'ram', 'processor', 'workMachine'],
+                        'properties' => [
+                            'id' => ['type' => 'integer'],
+                            'name' => ['type' => 'string'],
+                            'ram' => ['type' => 'integer'],
+                            'processor' => ['type' => 'integer'],
+                            'workMachine' => ['type' => 'integer'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
 }

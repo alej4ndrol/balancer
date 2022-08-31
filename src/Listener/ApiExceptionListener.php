@@ -19,7 +19,7 @@ class ApiExceptionListener
         private LoggerInterface $logger,
         private SerializerInterface $serializer,
 //        private bool $isDebug
-    //#todo exception listener tests
+        // #todo exception listener tests
     ) {
     }
 

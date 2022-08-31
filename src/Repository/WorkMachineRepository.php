@@ -49,7 +49,6 @@ class WorkMachineRepository extends ServiceEntityRepository
         $query->setParameter('processor', $processor);
         $query->setParameter('ram', $ram);
 
-        var_dump($query->getResult());
         return $query->getResult();
     }
 
